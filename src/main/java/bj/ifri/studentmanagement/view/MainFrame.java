@@ -27,7 +27,7 @@ public class MainFrame extends JFrame {
         super("Gestion des Étudiants - IFRI");
         initialiserFenetre();
         restitutionPanel = new RestitutionPanel();
-        formulairePanel = new FormulairePanel(restitutionPanel::ajouterEtudiant);
+        formulairePanel = new FormulairePanel(restitutionPanel::ajouterEtudiant, restitutionPanel::contientMatricule);
         construireInterface();
         getRootPane().setDefaultButton(formulairePanel.getBtnEnregistrer());
     }

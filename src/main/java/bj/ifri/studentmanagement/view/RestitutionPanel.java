@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -27,9 +29,11 @@ public class RestitutionPanel extends JPanel {
 
     private final JPanel listePanel;
     private final JLabel lblCompteur;
+    private final Set<String> matriculesEnregistres;
     private int nombreEtudiants;
 
     public RestitutionPanel() {
+        matriculesEnregistres = new HashSet<String>();
         setLayout(new BorderLayout(10, 10));
         setBackground(COULEUR_FOND);
         setBorder(new EmptyBorder(16, 16, 16, 16));
@@ -72,6 +76,9 @@ public class RestitutionPanel extends JPanel {
 
     public void ajouterEtudiant(Etudiant etudiant) {
         nombreEtudiants++;
+        if (etudiant.getMatricule() != null) {
+            matriculesEnregistres.add(etudiant.getMatricule().trim().toUpperCase());
+        }
 
         EtudiantCardPanel carte = new EtudiantCardPanel(etudiant, nombreEtudiants);
         carte.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -92,6 +99,13 @@ public class RestitutionPanel extends JPanel {
     private void mettreAJourCompteur() {
         String libelle = nombreEtudiants > 1 ? " étudiants enregistrés" : " étudiant enregistré";
         lblCompteur.setText(nombreEtudiants + libelle + " — les fiches les plus récentes sont en bas de la liste.");
+    }
+
+    public boolean contientMatricule(String matricule) {
+        if (matricule == null) {
+            return false;
+        }
+        return matriculesEnregistres.contains(matricule.trim().toUpperCase());
     }
 
     public int getNombreEtudiants() {

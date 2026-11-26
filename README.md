@@ -126,6 +126,13 @@ java -jar dist/Student-Management.jar
 - Formulaire scrollable pour les petites hauteurs de fenêtre.
 - Fiches de restitution légèrement améliorées (séparateur, espacement, compteur plus informatif).
 
+### Implémentation 3 — Qualité de saisie
+- Normalisation des saisies : espaces superflus, e-mail en minuscules, matricule normalisé en majuscules.
+- Validation année académique renforcée : format `AAAA-AAAA` et années consécutives (ex. `2026-2027`).
+- Unicité du matricule en session : refus d'un doublon déjà enregistré avec message explicite.
+- Feedback visuel de validation renforcé : bordure rouge sur champ invalide + message de retour dans le formulaire.
+- Correction des warnings de compilation NetBeans : utilisation de `release="8"` dans `nbproject/build-impl.xml` et `-Xlint:-options` dans `nbproject/project.properties`.
+
 ## Notes pédagogiques
 
 Le projet privilégie les notions enseignées dans les supports de cours :

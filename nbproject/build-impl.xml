@@ -105,7 +105,7 @@
     <target name="compile" depends="init,-init-check" description="Compile project.">
         <mkdir dir="${build.classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
-               encoding="${source.encoding}" source="${javac.source}" target="${javac.target}"
+               encoding="${source.encoding}" release="8"
                debug="${javac.debug}" deprecation="${javac.deprecation}"
                includeantruntime="false">
             <classpath>
@@ -122,7 +122,7 @@
         <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
         <mkdir dir="${build.classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
-               encoding="${source.encoding}" source="${javac.source}" target="${javac.target}"
+               encoding="${source.encoding}" release="8"
                debug="${javac.debug}" deprecation="${javac.deprecation}"
                includes="${javac.includes}" includeantruntime="false">
             <classpath>

@@ -17,6 +17,7 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -42,6 +43,7 @@ public class FormulairePanel extends JPanel {
     private static final Color COULEUR_TEXTE_AIDE = new Color(90, 100, 110);
     private static final Color COULEUR_BORDURE = new Color(210, 218, 226);
     private static final Color COULEUR_ERREUR = new Color(211, 47, 47);
+    private static final Color COULEUR_SUCCES = new Color(46, 125, 50);
 
     private static final Color BTN_ENREGISTRER_NORMAL = new Color(46, 125, 50);
     private static final Color BTN_ENREGISTRER_SURVOL = new Color(67, 160, 71);
@@ -75,13 +77,16 @@ public class FormulairePanel extends JPanel {
     private final JButton btnEnregistrer;
     private final JButton btnEffacer;
     private final JButton btnQuitter;
+    private final JLabel lblFeedback;
 
     private final Consumer<Etudiant> onEnregistrer;
+    private final Predicate<String> matriculeExiste;
     private final Border bordureChampNormale;
     private final Border bordureComboNormale;
 
-    public FormulairePanel(Consumer<Etudiant> onEnregistrer) {
+    public FormulairePanel(Consumer<Etudiant> onEnregistrer, Predicate<String> matriculeExiste) {
         this.onEnregistrer = onEnregistrer;
+        this.matriculeExiste = matriculeExiste;
 
         setLayout(new BorderLayout(10, 10));
         setBackground(COULEUR_FOND);
@@ -170,9 +175,15 @@ public class FormulairePanel extends JPanel {
         ajouterChamp(formulaire, gbc, ligne++, "Adresse e-mail", txtEmail, true);
         ajouterChamp(formulaire, gbc, ligne++, "Téléphone", txtTelephone, true);
 
+        lblFeedback = new JLabel(" ");
+        lblFeedback.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        lblFeedback.setForeground(COULEUR_ERREUR);
+        lblFeedback.setBorder(new EmptyBorder(8, 4, 0, 4));
+
         JPanel wrapperFormulaire = new JPanel(new BorderLayout());
         wrapperFormulaire.setBackground(Color.WHITE);
         wrapperFormulaire.add(formulaire, BorderLayout.NORTH);
+        wrapperFormulaire.add(lblFeedback, BorderLayout.SOUTH);
 
         JScrollPane scrollFormulaire = new JScrollPane(wrapperFormulaire);
         scrollFormulaire.setBorder(BorderFactory.createEmptyBorder());
@@ -321,55 +332,59 @@ public class FormulairePanel extends JPanel {
     private void enregistrerEtudiant() {
         reinitialiserStylesValidation();
 
-        String nom = txtNom.getText().trim();
-        String prenom = txtPrenom.getText().trim();
-        String matricule = txtMatricule.getText().trim();
+        String nom = Validateur.normaliserTexte(txtNom.getText());
+        String prenom = Validateur.normaliserTexte(txtPrenom.getText());
+        String matricule = Validateur.normaliserMatricule(txtMatricule.getText());
         String sexe = rbMasculin.isSelected() ? "Masculin" : "Féminin";
         String filiere = (String) cbFiliere.getSelectedItem();
         String niveau = (String) cbNiveau.getSelectedItem();
-        String anneeAcademique = txtAnneeAcademique.getText().trim();
+        String anneeAcademique = Validateur.normaliserTexte(txtAnneeAcademique.getText());
         String statut = (String) cbStatut.getSelectedItem();
-        String email = txtEmail.getText().trim();
-        String telephone = txtTelephone.getText().trim();
+        String email = Validateur.normaliserEmail(txtEmail.getText());
+        String telephone = Validateur.normaliserTelephone(txtTelephone.getText());
 
         if (!Validateur.estNonVide(nom)) {
-            afficherErreur("Le champ « Nom » est obligatoire.\nVeuillez saisir le nom de famille de l'étudiant.", txtNom);
+            afficherErreur("Le champ « Nom » est obligatoire. Veuillez saisir le nom de famille de l'étudiant.", txtNom);
             return;
         }
         if (!Validateur.estNonVide(prenom)) {
-            afficherErreur("Le champ « Prénom » est obligatoire.\nVeuillez saisir le prénom de l'étudiant.", txtPrenom);
+            afficherErreur("Le champ « Prénom » est obligatoire. Veuillez saisir le prénom de l'étudiant.", txtPrenom);
             return;
         }
         if (!Validateur.estNonVide(matricule)) {
-            afficherErreur("Le champ « Matricule » est obligatoire.\nVeuillez saisir l'identifiant académique de l'étudiant.", txtMatricule);
+            afficherErreur("Le champ « Matricule » est obligatoire. Veuillez saisir l'identifiant académique.", txtMatricule);
+            return;
+        }
+        if (matriculeExiste != null && matriculeExiste.test(matricule)) {
+            afficherErreur("Le matricule « " + matricule + " » est déjà enregistré pour cette session. Veuillez saisir un matricule unique.", txtMatricule);
             return;
         }
         if (!estSelectionValide(filiere)) {
-            afficherErreur("La filière n'a pas été sélectionnée.\nVeuillez choisir une filière dans la liste.", cbFiliere);
+            afficherErreur("La filière n'a pas été sélectionnée. Veuillez choisir une filière dans la liste.", cbFiliere);
             return;
         }
         if (!estSelectionValide(niveau)) {
-            afficherErreur("Le niveau n'a pas été sélectionné.\nVeuillez choisir L1, L2 ou L3.", cbNiveau);
+            afficherErreur("Le niveau n'a pas été sélectionné. Veuillez choisir L1, L2 ou L3.", cbNiveau);
             return;
         }
         if (!Validateur.estNonVide(anneeAcademique)) {
-            afficherErreur("Le champ « Année académique » est obligatoire.\nExemple attendu : 2026-2027.", txtAnneeAcademique);
+            afficherErreur("Le champ « Année académique » est obligatoire. Exemple attendu : 2026-2027.", txtAnneeAcademique);
             return;
         }
-        if (!estAnneeAcademiqueValide(anneeAcademique)) {
-            afficherErreur("Le format de l'année académique est invalide.\nVeuillez utiliser le format AAAA-AAAA, par exemple 2026-2027.", txtAnneeAcademique);
+        if (!Validateur.estAnneeAcademiqueValide(anneeAcademique)) {
+            afficherErreur("Année académique invalide. Utilisez le format AAAA-AAAA avec deux années consécutives (ex. : 2026-2027).", txtAnneeAcademique);
             return;
         }
         if (!estSelectionValide(statut)) {
-            afficherErreur("Le statut n'a pas été sélectionné.\nVeuillez choisir le statut de l'étudiant.", cbStatut);
+            afficherErreur("Le statut n'a pas été sélectionné. Veuillez choisir le statut de l'étudiant.", cbStatut);
             return;
         }
         if (!Validateur.estEmailValide(email)) {
-            afficherErreur("L'adresse e-mail est invalide.\nVeuillez saisir une adresse au format nom@domaine.com.", txtEmail);
+            afficherErreur("L'adresse e-mail est invalide. Exemple attendu : nom.prenom@ifri.bj.", txtEmail);
             return;
         }
         if (!Validateur.estTelephoneValide(telephone)) {
-            afficherErreur("Le numéro de téléphone est invalide.\nVeuillez saisir un numéro valide (8 à 20 caractères numériques/symboles + - espaces).", txtTelephone);
+            afficherErreur("Le numéro de téléphone est invalide. Utilisez 8 à 20 caractères (chiffres, espaces, +, -, parenthèses).", txtTelephone);
             return;
         }
 
@@ -382,6 +397,7 @@ public class FormulairePanel extends JPanel {
             onEnregistrer.accept(etudiant);
         }
 
+        afficherSucces("Étudiant enregistré : " + prenom + " " + nom + " (" + matricule + ").");
         JOptionPane.showMessageDialog(
                 this,
                 "L'étudiant " + prenom + " " + nom + " a été enregistré avec succès.\n"
@@ -397,12 +413,10 @@ public class FormulairePanel extends JPanel {
         return valeur != null && !valeur.startsWith("--");
     }
 
-    private boolean estAnneeAcademiqueValide(String valeur) {
-        return valeur != null && valeur.matches("^\\d{4}-\\d{4}$");
-    }
-
     private void afficherErreur(String message, JComponent composant) {
         marquerChampErreur(composant);
+        lblFeedback.setForeground(COULEUR_ERREUR);
+        lblFeedback.setText(message);
         JOptionPane.showMessageDialog(
                 this,
                 message,
@@ -410,6 +424,11 @@ public class FormulairePanel extends JPanel {
                 JOptionPane.WARNING_MESSAGE
         );
         composant.requestFocusInWindow();
+    }
+
+    private void afficherSucces(String message) {
+        lblFeedback.setForeground(COULEUR_SUCCES);
+        lblFeedback.setText(message);
     }
 
     private void marquerChampErreur(JComponent composant) {
@@ -429,6 +448,8 @@ public class FormulairePanel extends JPanel {
         restaurerBordureCombo(cbFiliere);
         restaurerBordureCombo(cbNiveau);
         restaurerBordureCombo(cbStatut);
+        lblFeedback.setForeground(COULEUR_ERREUR);
+        lblFeedback.setText(" ");
     }
 
     private void restaurerBordure(JComponent champ) {
