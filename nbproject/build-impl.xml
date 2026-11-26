@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+*** GENERATED/MAINTAINED BY NETBEANS IDE - minimal functional version ***
+-->
+<project xmlns:j2seproject1="http://www.netbeans.org/ns/j2se-project/1"
+         xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3"
+         basedir=".." default="default" name="Student-Management-impl">
+
+    <fail message="Please build using Ant 1.8.0 or higher.">
+        <condition>
+            <not>
+                <antversion atleast="1.8.0"/>
+            </not>
+        </condition>
+    </fail>
+
+    <target name="default" depends="jar" description="Build whole project."/>
+
+    <target name="-pre-init"/>
+    <target name="-init-private">
+        <property file="nbproject/private/config.properties"/>
+        <property file="nbproject/private/configs/${config}.properties"/>
+        <property file="nbproject/private/private.properties"/>
+    </target>
+    <target name="-init-user">
+        <property file="${user.properties.file}"/>
+    </target>
+    <target name="-init-project">
+        <property file="nbproject/configs/${config}.properties"/>
+        <property file="nbproject/project.properties"/>
+    </target>
+    <target name="-init-modules-supported">
+        <condition property="modules.supported.internal" value="true">
+            <not>
+                <equals arg1="${modules.supported.internal}" arg2="false"/>
+            </not>
+        </condition>
+    </target>
+    <target name="-init-macrodef-property">
+        <macrodef name="property" uri="http://www.netbeans.org/ns/j2se-project/1">
+            <attribute name="name"/>
+            <attribute name="value"/>
+            <sequential>
+                <property name="@{name}" value="${@{value}}"/>
+            </sequential>
+        </macrodef>
+    </target>
+    <target name="-do-init" depends="-pre-init,-init-private,-init-user,-init-project,-init-modules-supported">
+        <property name="platform.java" value="${java.home}/bin/java"/>
+        <available file="${manifest.file}" property="manifest.available"/>
+        <condition property="manifest.available+main.class">
+            <and>
+                <isset property="manifest.available"/>
+                <isset property="main.class"/>
+                <not><equals arg1="${main.class}" arg2="" trim="true"/></not>
+            </and>
+        </condition>
+        <condition property="manifest.available+main.class+mkdist.available">
+            <and>
+                <istrue value="${manifest.available+main.class}"/>
+                <isset property="mkdist.disabled"/>
+                <isfalse value="${mkdist.disabled}"/>
+            </and>
+        </condition>
+        <condition property="do.mkdist">
+            <and>
+                <isset property="manifest.available+main.class"/>
+                <not><isset property="mkdist.disabled"/></not>
+            </and>
+        </condition>
+        <condition property="do.mkdist">
+            <and>
+                <isset property="manifest.available+main.class+mkdist.available"/>
+            </and>
+        </condition>
+        <property name="run.jvmargs" value=""/>
+        <property name="javac.compilerargs" value=""/>
+        <property name="work.dir" value="${basedir}"/>
+        <condition property="have.tests">
+            <or/>
+        </condition>
+        <property name="javac.debug" value="true"/>
+        <property name="javadoc.preview" value="true"/>
+        <property name="source.encoding" value="${file.encoding}"/>
+        <condition property="javadoc.encoding.used" value="${javadoc.encoding}">
+            <isset property="javadoc.encoding"/>
+        </condition>
+        <property name="javadoc.encoding.used" value="${source.encoding}"/>
+        <property name="includes" value="**"/>
+        <property name="excludes" value=""/>
+        <property name="javac.includes" value=""/>
+        <mkdir dir="${build.dir}"/>
+    </target>
+    <target name="-post-init"/>
+    <target name="init" depends="-pre-init,-init-private,-init-user,-init-project,-do-init,-post-init"/>
+
+    <target name="-init-check" depends="init">
+        <fail unless="src.dir">Must set src.dir</fail>
+        <fail unless="build.dir">Must set build.dir</fail>
+        <fail unless="dist.dir">Must set dist.dir</fail>
+        <fail unless="build.classes.dir">Must set build.classes.dir</fail>
+        <fail unless="dist.jar">Must set dist.jar</fail>
+    </target>
+
+    <target name="compile" depends="init,-init-check" description="Compile project.">
+        <mkdir dir="${build.classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
+               encoding="${source.encoding}" source="${javac.source}" target="${javac.target}"
+               debug="${javac.debug}" deprecation="${javac.deprecation}"
+               includeantruntime="false">
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+            <compilerarg line="${javac.compilerargs}"/>
+        </javac>
+        <copy todir="${build.classes.dir}">
+            <fileset dir="${src.dir}" excludes="${build.classes.excludes},${excludes}" includes="${includes}"/>
+        </copy>
+    </target>
+
+    <target name="-do-compile-single">
+        <fail unless="javac.includes">Must select some files in the IDE or set javac.includes</fail>
+        <mkdir dir="${build.classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}"
+               encoding="${source.encoding}" source="${javac.source}" target="${javac.target}"
+               debug="${javac.debug}" deprecation="${javac.deprecation}"
+               includes="${javac.includes}" includeantruntime="false">
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="compile-single" depends="init,-init-check,-do-compile-single"/>
+
+    <target name="jar" depends="compile" description="Build JAR.">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.jar}" basedir="${build.classes.dir}" compress="${jar.compress}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="compile" description="Run project.">
+        <java classname="${main.class}" fork="true">
+            <jvmarg line="${run.jvmargs}"/>
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+                <pathelement path="${build.classes.dir}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="run-single" depends="compile-single" description="Run single file.">
+        <fail unless="run.class">Must select one file in the IDE or set run.class</fail>
+        <java classname="${run.class}" fork="true">
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+                <pathelement path="${build.classes.dir}"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="javadoc" depends="init,-init-check" description="Build Javadoc.">
+        <mkdir dir="${dist.javadoc.dir}"/>
+        <javadoc source="${javac.source}" destdir="${dist.javadoc.dir}"
+                 encoding="${source.encoding}" charset="${source.encoding}"
+                 author="${javadoc.author}" version="${javadoc.version}"
+                 use="${javadoc.use}" windowtitle="${javadoc.windowtitle}">
+            <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}"/>
+            <classpath>
+                <pathelement path="${javac.classpath}"/>
+            </classpath>
+        </javadoc>
+    </target>
+
+    <target name="clean" depends="init" description="Clean build products.">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="test" depends="compile" description="Run tests (none configured)."/>
+
+</project>

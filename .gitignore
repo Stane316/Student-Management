@@ -1,0 +1,7 @@
+/build/
+/dist/
+/nbproject/private/
+/nbproject/build-impl.xml~
+*.class
+.DS_Store
+Thumbs.db
