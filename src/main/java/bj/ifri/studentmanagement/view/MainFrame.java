@@ -78,7 +78,7 @@ public class MainFrame extends JFrame {
     private void confirmerFermeture() {
         int choix = JOptionPane.showConfirmDialog(
                 this,
-                "Voulez-vous vraiment quitter l'application ?",
+                "Voulez-vous vraiment quitter l'application ?\nLes données enregistrées seront perdues à la fermeture de la session.",
                 "Confirmation de fermeture",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE

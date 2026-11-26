@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -29,6 +30,7 @@ public class RestitutionPanel extends JPanel {
 
     private final JPanel listePanel;
     private final JLabel lblCompteur;
+    private final JScrollPane scrollPane;
     private final Set<String> matriculesEnregistres;
     private int nombreEtudiants;
 
@@ -62,7 +64,7 @@ public class RestitutionPanel extends JPanel {
         conteneur.setBackground(COULEUR_FOND);
         conteneur.add(listePanel, BorderLayout.NORTH);
 
-        JScrollPane scrollPane = new JScrollPane(conteneur);
+        scrollPane = new JScrollPane(conteneur);
         scrollPane.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(COULEUR_BORDURE_SCROLL, 1, true),
                 BorderFactory.createEmptyBorder(0, 0, 0, 0)
@@ -94,6 +96,14 @@ public class RestitutionPanel extends JPanel {
         carte.setMaximumSize(new Dimension(Integer.MAX_VALUE, carte.getPreferredSize().height));
         listePanel.revalidate();
         listePanel.repaint();
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                scrollPane.getVerticalScrollBar().setValue(
+                        scrollPane.getVerticalScrollBar().getMaximum());
+            }
+        });
     }
 
     private void mettreAJourCompteur() {

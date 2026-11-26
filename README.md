@@ -133,6 +133,13 @@ java -jar dist/Student-Management.jar
 - Feedback visuel de validation renforcé : bordure rouge sur champ invalide + message de retour dans le formulaire.
 - Correction des warnings de compilation NetBeans : utilisation de `release="8"` dans `nbproject/build-impl.xml` et `-Xlint:-options` dans `nbproject/project.properties`.
 
+### Implémentation 4 — Raffinement visuel/pédagogique final
+- Harmonisation des messages de confirmation de fermeture (bouton Quitter et croix fenêtre).
+- Message de succès conservé dans le formulaire après réinitialisation post-enregistrement.
+- Défilement automatique vers la dernière fiche ajoutée dans la zone de restitution.
+- Ajout de `Main-Class` dans `manifest.mf` pour faciliter l'exécution du JAR.
+- Vérification du packaging JAR (classes et manifeste présents).
+
 ## Notes pédagogiques
 
 Le projet privilégie les notions enseignées dans les supports de cours :

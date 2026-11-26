@@ -397,7 +397,6 @@ public class FormulairePanel extends JPanel {
             onEnregistrer.accept(etudiant);
         }
 
-        afficherSucces("Étudiant enregistré : " + prenom + " " + nom + " (" + matricule + ").");
         JOptionPane.showMessageDialog(
                 this,
                 "L'étudiant " + prenom + " " + nom + " a été enregistré avec succès.\n"
@@ -407,6 +406,7 @@ public class FormulairePanel extends JPanel {
         );
 
         reinitialiserFormulaire();
+        afficherSucces("Étudiant enregistré : " + prenom + " " + nom + " (" + matricule + ").");
     }
 
     private boolean estSelectionValide(String valeur) {
@@ -486,7 +486,7 @@ public class FormulairePanel extends JPanel {
     private void quitterApplication() {
         int choix = JOptionPane.showConfirmDialog(
                 this,
-                "Voulez-vous vraiment quitter l'application ?\nLes données non sauvegardées dans un fichier seront perdues à la fermeture.",
+                "Voulez-vous vraiment quitter l'application ?\nLes données enregistrées seront perdues à la fermeture de la session.",
                 "Confirmation de fermeture",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE
