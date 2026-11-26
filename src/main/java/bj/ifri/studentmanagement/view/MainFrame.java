@@ -29,6 +29,7 @@ public class MainFrame extends JFrame {
         restitutionPanel = new RestitutionPanel();
         formulairePanel = new FormulairePanel(restitutionPanel::ajouterEtudiant);
         construireInterface();
+        getRootPane().setDefaultButton(formulairePanel.getBtnEnregistrer());
     }
 
     private void initialiserFenetre() {

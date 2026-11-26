@@ -104,8 +104,9 @@ java -cp build/classes bj.ifri.studentmanagement.app.Main
 java -jar dist/Student-Management.jar
 ```
 
-## Fonctionnalités actuelles (Implémentation 1)
+## Fonctionnalités actuelles
 
+### Implémentation 1 — Socle MVP
 - Interface principale divisée en deux zones (formulaire à gauche, restitution à droite).
 - Formulaire étudiant : Nom, Prénom, Matricule, Sexe, Filière, Niveau, Année académique, Statut, E-mail, Téléphone.
 - Bouton **Enregistrer** : validation des champs, création d'un étudiant, ajout en mémoire, affichage immédiat d'une fiche synthétique à droite, réinitialisation du formulaire après succès.
@@ -113,6 +114,17 @@ java -jar dist/Student-Management.jar
 - Bouton **Quitter** : confirmation avant fermeture de l'application.
 - Changement de couleur des boutons au survol et au clic via `MouseAdapter`.
 - Confirmation de fermeture également sur la croix de la fenêtre.
+
+### Implémentation 2 — Validation visuelle et robustesse UX
+- Boutons avec rendu personnalisé (`paintComponent`) pour une meilleure cohérence visuelle selon le Look & Feel.
+- Mnémoniques clavier (Alt+E, Alt+F, Alt+Q) et infobulles sur les boutons.
+- Bouton **Enregistrer** défini comme bouton par défaut de la fenêtre (touche Entrée).
+- Messages de validation plus précis, avec indication du champ concerné et du format attendu.
+- Mise en évidence visuelle du champ invalide (bordure rouge) et réinitialisation des styles à la correction/réinitialisation.
+- Validation du format de l'année académique (`AAAA-AAAA`).
+- Amélioration des marges, espacements, tailles de champs et lisibilité.
+- Formulaire scrollable pour les petites hauteurs de fenêtre.
+- Fiches de restitution légèrement améliorées (séparateur, espacement, compteur plus informatif).
 
 ## Notes pédagogiques
 
